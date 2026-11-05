@@ -1,5 +1,5 @@
 # Joiner–Mover–Leaver Lifecycle Automation
-
+ 
 Hands-on Identity and Access Management (IAM) lab that connects an HR system of record to an identity provider and implements the three lifecycle scripts that keep them in sync: **joiner**, **mover**, and **leaver**.
 
 ![Lab](https://img.shields.io/badge/Lab-IAM%20Lifecycle-0F172A)
@@ -388,5 +388,6 @@ This work is based on an **educational hands-on IAM lab** (All Things Identity �
 References to Microsoft Entra ID, Okta, and SailPoint IdentityIQ are a **concepts map only**—not a claim of hands-on production experience with those products.
 
 Screenshots embedded here come from the lab guide’s documented outcomes and should not be presented as independent production evidence.
-#   l a b - 0 1 - j o i n e r - m o v e r - l e a v e r  
+#   l a b - 0 1 - j o i n e r - m o v e r - l e a v e r 
+ 
  
