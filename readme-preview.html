@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>README — Joiner–Mover–Leaver</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true, theme: "default" });</script>
+<style>
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #1f2328;
+    background: #f6f8fa;
+  }
+  .banner {
+    max-width: 980px;
+    margin: 16px auto 0;
+    padding: 10px 14px;
+    background: #ddf4ff;
+    border: 1px solid #54aeff66;
+    border-radius: 8px;
+    color: #0550ae;
+    font-size: 14px;
+  }
+  .wrap {
+    max-width: 980px;
+    margin: 16px auto 64px;
+    background: #fff;
+    border: 1px solid #d0d7de;
+    border-radius: 12px;
+    padding: 32px 40px;
+  }
+  h1 { margin-top: 0; font-size: 2em; }
+  h2 {
+    font-size: 1.5em;
+    border-bottom: 1px solid #d0d7de;
+    padding-bottom: .3em;
+    margin-top: 1.6em;
+  }
+  h3 { margin-top: 1.3em; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  th, td {
+    border: 1px solid #d0d7de;
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th { background: #f6f8fa; }
+  img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    margin: 8px 0 4px;
+  }
+  blockquote {
+    margin: 1em 0;
+    padding: 0 1em;
+    color: #656d76;
+    border-left: .25em solid #d0d7de;
+  }
+  code {
+    background: #eff1f3;
+    padding: .2em .4em;
+    border-radius: 6px;
+    font-size: 85%;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  }
+  pre {
+    background: #f6f8fa;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    padding: 12px;
+    overflow: auto;
+  }
+  pre.mermaid {
+    background: #fff;
+    text-align: center;
+  }
+  hr { border: 0; border-top: 1px solid #d0d7de; margin: 1.5em 0; }
+  ul, ol { padding-left: 1.5em; }
+</style>
+</head>
+<body>
+  <div class="banner">Full README preview (with Mermaid diagrams rendered like GitHub).</div>
+  <div class="wrap">
+  <h1>Joiner–Mover–Leaver Lifecycle Automation</h1>
+<p>Hands-on Identity and Access Management (IAM) lab that connects an HR system of record to an identity provider and implements the three lifecycle scripts that keep them in sync: <strong>joiner</strong>, <strong>mover</strong>, and <strong>leaver</strong>.</p>
+<p><img alt="Lab" src="https://img.shields.io/badge/Lab-IAM%20Lifecycle-0F172A" /><br />
+<img alt="Focus" src="https://img.shields.io/badge/Focus-Joiner%20Mover%20Leaver-2563EB" /><br />
+<img alt="Stack" src="https://img.shields.io/badge/Stack-OrangeHRM%20%7C%20Authentik%20%7C%20Python-64748B" /><br />
+<img alt="Level" src="https://img.shields.io/badge/Level-Hands--on%20Lab-22C55E" /><br />
+<img alt="Guide" src="https://img.shields.io/badge/Source-All%20Things%20Identity%20Lab%201%20v3-94A3B8" /></p>
+<hr />
+<h2>Project Overview</h2>
+<p>Every company has the same problem: <strong>HR knows who works there</strong>, while the <strong>identity system decides who can log in</strong>. When those two disagree, people cannot work on day one, people keep access from a job they left, and people still have an account after they have been terminated.</p>
+<p>This lab fixes that gap by connecting:</p>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Role in the lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OrangeHRM</strong></td>
+<td>HR source of truth (hires, department / Sub Unit changes, terminations)</td>
+</tr>
+<tr>
+<td><strong>Authentik</strong></td>
+<td>Identity provider (accounts, department groups, active / disabled state)</td>
+</tr>
+<tr>
+<td><strong><code>joiner.py</code> / <code>mover.py</code> / <code>leaver.py</code></strong></td>
+<td>Python scripts that keep Authentik in sync with OrangeHRM</td>
+</tr>
+<tr>
+<td><strong><code>jml_common.py</code></strong></td>
+<td>Lab-provided helper that reads employees from OrangeHRM and calls the Authentik API</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Analyst and Engineer.</strong> Every step in the lab has two halves:</p>
+<ul>
+<li><strong>Analyst</strong> — look at something and decide what is wrong</li>
+<li><strong>Engineer</strong> — change something to fix it</li>
+</ul>
+<p>Real IAM work is both. The lab scripts start mostly written; you fill in lines marked <code># TODO: you write this</code>.</p>
+<p><strong>Why it matters:</strong> Automating joiner / mover / leaver (JML) reduces ticket-driven provisioning delay, prevents access creep on transfers, and shortens the window where terminated employees can still log in—issues auditors and security teams check first.</p>
+<hr />
+<h2>Objectives</h2>
+<table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Objective</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Analysis</strong></td>
+<td>Use HR vs Identity reconciliation to classify findings before changing access</td>
+</tr>
+<tr>
+<td><strong>Joiner</strong></td>
+<td>Create Authentik accounts for new hires and assign the matching department group (including <code>dept-unassigned</code>)</td>
+</tr>
+<tr>
+<td><strong>Mover</strong></td>
+<td>On department change, add the new group and remove obsolete groups (TODO 3)</td>
+</tr>
+<tr>
+<td><strong>Leaver</strong></td>
+<td>Disable terminated accounts and remove department groups (TODOs 4–7)</td>
+</tr>
+<tr>
+<td><strong>Operations</strong></td>
+<td>Refresh reconciliation until HR and identity agree; confirm idempotent re-runs</td>
+</tr>
+<tr>
+<td><strong>Portfolio</strong></td>
+<td>Document what the automation does, what it runs on, and honest lab scope</td>
+</tr>
+<tr>
+<td><strong>Communication</strong></td>
+<td>Map open-source lab concepts to Entra ID, Okta, and SailPoint IdentityIQ terminology</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Scenario / Business Context</h2>
+<p>The lab environment starts with identity drift already present:</p>
+<ul>
+<li><strong>Ten new hires</strong> are active in OrangeHRM with <strong>no Authentik account</strong> yet (<code>No account yet</code>).</li>
+<li><strong>Martin Li</strong> was <strong>terminated in HR on 2026-09-01</strong>, but his Authentik account is still <strong>active</strong> and still in <code>dept-defenders</code> (<code>Terminated but still active</code>).</li>
+</ul>
+<p>The intended workflow is: inspect findings first, implement each lifecycle script, then re-check reconciliation until HR and identity agree.</p>
+<p>Later, the lab introduces:</p>
+<ul>
+<li>A controlled transfer — <strong>Kate Bishop</strong> moves from <strong>Avengers</strong> to <strong>X-Men</strong> — to demonstrate <strong>access creep</strong> when the new group is added but the old group is kept.</li>
+<li>A second termination — <strong>Jessica Jones</strong> — so the leaver must remediate <strong>two</strong> terminated-but-still-active accounts (Martin and Jessica).</li>
+</ul>
+<hr />
+<h2>Technologies and Tools</h2>
+<table>
+<thead>
+<tr>
+<th>Tool / Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OrangeHRM</strong></td>
+<td>HR system of record for new hires, department (Sub Unit) changes, and terminations</td>
+</tr>
+<tr>
+<td><strong>Authentik</strong></td>
+<td>Identity provider for user accounts, department groups, and active / disabled state</td>
+</tr>
+<tr>
+<td><strong>IAM Lab Dashboard</strong></td>
+<td>Password-gated lab UI for <strong>HR vs Identity</strong> reconciliation and the script builder / runner</td>
+</tr>
+<tr>
+<td><strong><code>joiner.py</code></strong></td>
+<td>Creates Authentik accounts for new hires and assigns department groups</td>
+</tr>
+<tr>
+<td><strong><code>mover.py</code></strong></td>
+<td>Adds the new department group and removes obsolete groups after transfers</td>
+</tr>
+<tr>
+<td><strong><code>leaver.py</code></strong></td>
+<td>Disables terminated accounts and removes remaining department groups</td>
+</tr>
+<tr>
+<td><strong><code>jml_common.py</code></strong></td>
+<td>Lab-provided helper module: reads employees from the OrangeHRM database and calls the Authentik API</td>
+</tr>
+<tr>
+<td><strong>GitHub</strong></td>
+<td>Public portfolio packaging for the three scripts and this README</td>
+</tr>
+</tbody>
+</table>
+<p><em>Screens in the source guide: OrangeHRM 5.8.1 and Authentik 2026.8.5 (November 2026).</em></p>
+<hr />
+<h2>Architecture / Workflow</h2>
+<p>Editable diagram written directly in this README (Mermaid). Change any label or arrow in the code block below — GitHub renders it as a diagram automatically.</p>
+<pre class="mermaid">
+flowchart LR
+  subgraph HR[OrangeHRM - HR System of Record]
+    H1[New hire records]
+    H2[Department / Sub Unit change]
+    H3[Terminate employment]
+  end
+
+  subgraph SCRIPTS[Python sync scripts - jml_common.py]
+    J[joiner.py - create account + dept group]
+    M[mover.py - add new group + remove old]
+    L[leaver.py - disable account + remove groups]
+  end
+
+  subgraph IDP[Authentik - Identity Provider]
+    A1[User accounts]
+    A2[Department groups]
+    A3[Active / disabled state]
+  end
+
+  H1 -->|Joiner| J --> A1
+  H2 -->|Mover| M --> A2
+  H3 -->|Leaver| L --> A3
+</pre>
+
+<pre class="mermaid">
+flowchart TB
+  DASH[IAM Dashboard - HR vs Identity]
+
+  DASH --> F1[No account yet - Joiner creates account + group]
+  DASH --> F2[Wrong groups / access creep - Mover removes stale groups]
+  DASH --> F3[Terminated but still active - Leaver disables + deprovisions]
+  DASH --> F4[OK - HR and IdP agree - Idempotent re-runs change nothing]
+</pre>
+
+<p><strong>Flow in plain language</strong></p>
+<ol>
+<li>HR events originate in OrangeHRM (new hire, department change, termination).</li>
+<li>The matching Python script applies the required Authentik change via <code>jml_common.py</code>.</li>
+<li>The dashboard compares every OrangeHRM employee to their Authentik account and surfaces findings until the result is <strong>11 rows · 0 finding(s)</strong>.</li>
+</ol>
+<blockquote>
+<p>Lab stack: OrangeHRM 5.8.1 · Authentik 2026.8.5 · Python sync via <code>jml_common</code> · Educational lab environment</p>
+</blockquote>
+<hr />
+<h2>Implementation / Steps</h2>
+<blockquote>
+<p><strong>Evidence note:</strong> Screenshots below are extracted from the lab guide’s documented “YOU SHOULD SEE” outcomes. They illustrate the intended workflow from the PDF. They are <strong>not</strong> claimed as personal production evidence. Scripts are filled in via lab TODOs inside the dashboard environment.</p>
+</blockquote>
+<h3>Step 1 — Lab setup (two browser tabs)</h3>
+<p>Keep the <strong>IAM Dashboard</strong> and <strong>OrangeHRM</strong> open side by side. The dashboard asks for its password because it can run code on the lab. Log in to OrangeHRM as <code>admin</code> with the welcome-email password. OrangeHRM lands on the dashboard and does not force a password change.</p>
+<p><img alt="OrangeHRM login" src="assets/screenshots/step-01-orangehrm-login.png" /></p>
+<p><em>Figure: OrangeHRM admin login (lab guide).</em></p>
+<p><img alt="OrangeHRM dashboard" src="assets/screenshots/step-02-orangehrm-dashboard.png" /></p>
+<p><em>Figure: OrangeHRM dashboard after login (lab guide).</em></p>
+<h3>Step 2 — Initial analysis (Analyst): HR vs Identity</h3>
+<p>Nobody on an IAM team should change access without first knowing what is there. Open <strong>1 · HR vs Identity</strong>. The tab places every OrangeHRM employee next to their Authentik account.</p>
+<p><img alt="Initial HR vs Identity findings" src="assets/screenshots/step-03-hr-vs-identity-findings.png" /></p>
+<p><em>Figure: Starting state — </em><em>11 rows · 1 finding</em><em>. Ten people show “No account yet”; Martin Li is terminated in HR but still active in Authentik with <code>dept-defenders</code> (lab guide).</em></p>
+<p><strong>Why Martin’s row is the most dangerous finding on this screen:</strong> a terminated employee can still log in and still holds group access. The lab intentionally leaves him for the leaver (Step 04)—the joiner must not “fix” terminated users by creating or updating them as if they were active hires.</p>
+<h3>Step 3 — Joiner workflow (Engineer): <code>joiner.py</code> TODOs 1–2</h3>
+<p><strong>Why:</strong> a new hire should be able to log in on day one without filing a ticket. HR already knows they are coming, so HR should drive provisioning. In a real company the joiner may also send a welcome / enrollment link; this lab focuses on creating the account and department group—the part access depends on.</p>
+<p>Open <strong>2 · Build your scripts</strong> → <code>joiner.py</code>. Run once <strong>before</strong> editing so you can see the ten new hires detected with TODO 1 incomplete.</p>
+<p><img alt="Joiner before TODOs" src="assets/screenshots/step-04-joiner-before-todos.png" /></p>
+<p><em>Figure: Untouched joiner finds all ten hires and changes nothing (lab guide).</em></p>
+<p>Complete:</p>
+<ol>
+<li><strong>TODO 1</strong> — replace <code>user = None</code> with the account-create call named in the comment.</li>
+<li><strong>TODO 2</strong> — add the new user to their department’s group (same indent as the TODO comments).</li>
+</ol>
+<p>Save, then Run. Documented output includes an <strong>Unassigned</strong> hire mapped to <code>dept-unassigned</code>, plus department groups such as <code>dept-avengers</code>, <code>dept-defenders</code>, and <code>dept-x-men</code>.</p>
+<p><img alt="Joiner success output" src="assets/screenshots/step-05-joiner-success.png" /></p>
+<p><em>Figure: Ten new hires processed — each account created and added to the matching <code>dept-*</code> group, including <code>dept-unassigned</code> for Unassigned (lab guide).</em></p>
+<p>Refresh <strong>HR vs Identity</strong>. Every active employee shows <strong>OK</strong>. The joiner <strong>skips anyone HR has terminated</strong>, so Martin’s finding remains: <strong>10 OK and 1 finding left</strong>.</p>
+<p><img alt="After joiner refresh" src="assets/screenshots/step-06-after-joiner-refresh.png" /></p>
+<p><em>Figure: Post-joiner reconciliation — 10 OK rows; Martin still terminated-but-active (lab guide).</em></p>
+<h3>Step 4 — Mover scenario (Analyst → Engineer): Kate Bishop transfer</h3>
+<p><strong>Why:</strong> people change jobs inside a company all the time. What they should keep and what they should lose is where many real access problems start.</p>
+<p>In OrangeHRM: <strong>PIM → Kate Bishop → Job</strong>. Change <strong>Sub Unit</strong> from <strong>Avengers</strong> to <strong>X-Men</strong> and Save (“Successfully Updated”). HR now shows X-Men; identity does not know yet.</p>
+<p><img alt="Kate department move in HR" src="assets/screenshots/step-07-kate-hr-move.png" /></p>
+<p><em>Figure: Kate moved to X-Men in HR; identity not yet corrected (lab guide).</em></p>
+<p>The mover script <strong>already adds the new group</strong>. Running it as-is produces:</p>
+<pre><code class="language-text">Mover: Kate Bishop is now in X-Men
+  + kate.bishop added to dept-x-men
+Mover done.
+</code></pre>
+<p>Notice what the output does <strong>not</strong> say: nothing was taken away.</p>
+<p><img alt="Mover adds new group only" src="assets/screenshots/step-08-mover-adds-group.png" /></p>
+<p><em>Figure: Incomplete mover adds <code>dept-x-men</code> only (lab guide).</em></p>
+<p>After Refresh, Kate is flagged <strong>Wrong groups</strong>: she is in <code>dept-avengers</code> <strong>and</strong> <code>dept-x-men</code>. That is <strong>access creep</strong>—nothing broke; she can do the new job and the old one. Multiplied across years of transfers, this is the audit pattern where one person retains access from every prior team.</p>
+<p><img alt="Access creep finding" src="assets/screenshots/step-09-access-creep.png" /></p>
+<p><em>Figure: Access creep — Kate retains <code>dept-avengers</code> while also holding <code>dept-x-men</code> (lab guide).</em></p>
+<h3>Step 5 — Complete the mover: TODO 3 and idempotency</h3>
+<p>In <code>mover.py</code>, <strong>TODO 3</strong> is where the old group is removed. Write a loop that removes every group the user has that is <strong>not</strong> the one they should have. After Save + Run:</p>
+<pre><code class="language-text">  - kate.bishop removed from dept-avengers
+Mover done.
+</code></pre>
+<p><img alt="Mover removes old group" src="assets/screenshots/step-10-mover-removes-old-group.png" /></p>
+<p><em>Figure: TODO 3 removes the obsolete Avengers group (lab guide).</em></p>
+<p>Refresh again: Kate shows <strong>OK</strong> with only <code>dept-x-men</code>. Run the mover a second time—it prints only <code>Mover done.</code> A good sync script can run many times and <strong>only change what is wrong</strong> (idempotency).</p>
+<p><img alt="Kate OK after mover" src="assets/screenshots/step-11-kate-ok.png" /></p>
+<p><em>Figure: Kate OK with only <code>dept-x-men</code>; HR and identity agree again (lab guide).</em></p>
+<h3>Step 6 — Leaver workflow (Analyst → Engineer): Jessica + Martin</h3>
+<p><strong>Why:</strong> when someone leaves, every hour their account stays on is a risk—and it is often the first thing an auditor checks.</p>
+<p>In OrangeHRM: <strong>Jessica Jones → Job → Terminate Employment</strong>. Pick today’s date and any reason, then Save. Her name shows <strong>(Past Employee)</strong>. Her Authentik login is still on until the leaver runs.</p>
+<p><img alt="Jessica terminated in HR" src="assets/screenshots/step-12-jessica-terminated.png" /></p>
+<p><em>Figure: Jessica listed as a past employee in HR; login still on until remediation (lab guide).</em></p>
+<p>Refresh <strong>HR vs Identity</strong>. There are now <strong>two</strong> leavers who can still log in: <strong>Martin</strong> (from the start) and <strong>Jessica</strong>.</p>
+<p><img alt="Two leavers still active" src="assets/screenshots/step-13-two-leavers-active.png" /></p>
+<p><em>Figure: Two findings — Martin Li and Jessica Jones terminated in HR but still active in Authentik (lab guide).</em></p>
+<p>Open <code>leaver.py</code>. Steps are written as comments; implement code under <strong>TODOs 4, 5, 6, and 7</strong> (building on patterns already used in joiner and mover). After Save + Run, documented output:</p>
+<pre><code class="language-text">  - disabled account jessica.jones
+  - jessica.jones removed from dept-defenders
+  - disabled account martin.li
+  - martin.li removed from dept-defenders
+Leaver done.
+</code></pre>
+<p><img alt="Leaver success output" src="assets/screenshots/step-14-leaver-success.png" /></p>
+<p><em>Figure: Both leavers handled — accounts disabled and department groups removed (lab guide).</em></p>
+<h3>Step 7 — Final reconciliation</h3>
+<p>Refresh <strong>HR vs Identity</strong> one last time.</p>
+<p><img alt="Zero findings" src="assets/screenshots/step-15-zero-findings.png" /></p>
+<p><em>Figure: Final documented state — </em><em>11 rows · 0 findings</em><em>. Terminated users show disabled accounts and empty groups; active users match department memberships (lab guide).</em></p>
+<hr />
+<h2>Key Findings / Results</h2>
+<p>Documented outcomes from the lab guide (not invented metrics):</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Documented result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Initial analysis</td>
+<td><strong>11 rows · 1 finding</strong> — ten “No account yet”; Martin Li terminated but still active in <code>dept-defenders</code></td>
+</tr>
+<tr>
+<td>After joiner</td>
+<td>Ten new hires get accounts + department groups (including <code>dept-unassigned</code>); joiner skips terminated; <strong>10 OK · 1 finding</strong></td>
+</tr>
+<tr>
+<td>After incomplete mover</td>
+<td>Kate flagged <strong>Wrong groups</strong> (<code>dept-avengers</code> + <code>dept-x-men</code>) — access creep</td>
+</tr>
+<tr>
+<td>After TODO 3 mover</td>
+<td>Kate <strong>OK</strong> with only <code>dept-x-men</code>; second run makes no unnecessary changes</td>
+</tr>
+<tr>
+<td>After Jessica termination (pre-leaver)</td>
+<td><strong>Two</strong> terminated-but-still-active findings (Martin + Jessica)</td>
+</tr>
+<tr>
+<td>After leaver (TODOs 4–7)</td>
+<td>Both accounts disabled; department groups removed</td>
+</tr>
+<tr>
+<td>Final reconciliation</td>
+<td><strong>11 rows · 0 findings</strong> — HR and Authentik agree</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Portfolio Requirements (from Lab Guide)</h2>
+<p>The lab asks for a public repository with the three downloaded scripts plus a README that covers the template below.</p>
+<h3>Repository artifacts</h3>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Status in this folder</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>joiner.py</code></td>
+<td><strong>Add from lab dashboard Download</strong> (not present in <code>scripts/</code> yet)</td>
+</tr>
+<tr>
+<td><code>mover.py</code></td>
+<td><strong>Add from lab dashboard Download</strong> (not present in <code>scripts/</code> yet)</td>
+</tr>
+<tr>
+<td><code>leaver.py</code></td>
+<td><strong>Add from lab dashboard Download</strong> (not present in <code>scripts/</code> yet)</td>
+</tr>
+<tr>
+<td><code>jml_common.py</code></td>
+<td>Lab-provided helper used by the scripts (reads OrangeHRM; calls Authentik API)</td>
+</tr>
+<tr>
+<td><code>README.md</code></td>
+<td>This document</td>
+</tr>
+</tbody>
+</table>
+<h3>What it does</h3>
+<p>Keeps an identity provider (<strong>Authentik</strong>) in sync with an HR system (<strong>OrangeHRM</strong>): new hires get an account and a department group, transfers swap groups (add new / remove old), and terminations disable the account and remove its groups.</p>
+<h3>What it runs on</h3>
+<p>The scripts use <strong><code>jml_common.py</code></strong>, a helper module the lab provides. It reads employees from the OrangeHRM database and calls the Authentik API. Scripts are completed via TODOs in the IAM Lab Dashboard script builder, then downloaded for the portfolio.</p>
+<h3>How I built it</h3>
+<blockquote>
+<p><strong>[Personal input needed]</strong> Two or three sentences in your own words. Which script was hardest, and why? (Do not invent experience—write this after you complete the TODOs.)</p>
+</blockquote>
+<h3>The bug I fixed</h3>
+<blockquote>
+<p><strong>[Personal input needed]</strong> Describe <strong>access creep</strong> in your own words, and what <strong>TODO 3</strong> changed (removing obsolete department groups after Kate’s Avengers → X-Men move).</p>
+</blockquote>
+<h3>What I’d improve for a real company</h3>
+<blockquote>
+<p><strong>[Personal input needed]</strong> Pick one (or add your own): run on a schedule instead of a button; log every change for audit; require approval before disabling an executive’s account; or another improvement you thought of.</p>
+</blockquote>
+<h3>Where I built it</h3>
+<p>In a <strong>personal / educational lab environment, not in production.</strong></p>
+<blockquote>
+<p><strong>Keep it honest (from the lab guide):</strong> “I built JML automation in my lab” is true and strong. Do not let a résumé turn this into production experience it is not.</p>
+</blockquote>
+<hr />
+<h2>Skills Demonstrated</h2>
+<ul>
+<li>Identity lifecycle automation (joiner / mover / leaver)</li>
+<li>HR-driven provisioning with OrangeHRM as source of truth</li>
+<li>Identity reconciliation and finding classification (HR vs Identity)</li>
+<li>Access creep detection and remediation (TODO 3)</li>
+<li>Account disablement and group deprovisioning on termination (TODOs 4–7)</li>
+<li>Handling department edge cases (including Unassigned → <code>dept-unassigned</code>)</li>
+<li>Idempotent sync design (safe re-runs)</li>
+<li>Python scripting against an identity API via a shared helper module</li>
+<li>Translating lab concepts to enterprise IAM vocabulary (Entra ID, Okta, SailPoint)</li>
+</ul>
+<hr />
+<h2>Real-World Relevance / Enterprise IAM Mapping</h2>
+<p>You built this on open-source tools. Platforms in job postings do the same work with their own names. <strong>This is a concepts map, not a claim that you know these products.</strong></p>
+<table>
+<thead>
+<tr>
+<th>What this lab builds</th>
+<th>Microsoft Entra ID</th>
+<th>Okta</th>
+<th>SailPoint IdentityIQ</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OrangeHRM as the source of truth</td>
+<td>HR-driven (inbound) provisioning</td>
+<td>An HR app (e.g. Workday) as the profile source</td>
+<td>An authoritative application</td>
+</tr>
+<tr>
+<td><code>joiner.py</code></td>
+<td>Joiner workflow in Lifecycle Workflows</td>
+<td>User created from the profile source</td>
+<td>Lifecycle event, type Create</td>
+</tr>
+<tr>
+<td>Department to group</td>
+<td>Dynamic membership group (e.g. <code>user.department -eq "Sales"</code>)</td>
+<td>Group rule on the department attribute</td>
+<td>Role assignment rule on an identity attribute</td>
+</tr>
+<tr>
+<td><code>mover.py</code> removing the old group</td>
+<td>Mover workflow; dynamic group drops the user when the attribute changes</td>
+<td>Group rule removes the user when the department changes</td>
+<td>Lifecycle event, type Attribute Change</td>
+</tr>
+<tr>
+<td><code>leaver.py</code></td>
+<td>Leaver workflow: disable account, remove from groups</td>
+<td>Deactivation driven by the profile source</td>
+<td>Lifecycle event on active → terminated, triggering deprovisioning</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Enterprise concept mapping" src="assets/screenshots/step-16-enterprise-mapping.png" /></p>
+<p><em>Figure: Lab-to-enterprise concept map from the source guide (concepts map only—not product experience).</em></p>
+<p><em>Guide sources checked 2026-09-27: Microsoft Learn (HR-driven provisioning, Entra ID Governance lifecycle automation, dynamic membership groups); Okta Help Center (group rules, profile sourcing); SailPoint IdentityIQ 8.2 Lifecycle Manager and Application Configuration guides.</em></p>
+<hr />
+<h2>Challenges / Lessons Learned</h2>
+<p>Supported directly by the lab narrative:</p>
+<ul>
+<li><strong>Terminated-but-active is the highest-risk initial finding</strong> — access that should already be gone is still usable (Martin Li).</li>
+<li><strong>Access creep is quiet</strong> — after Kate’s transfer, nothing “broke”; she could do the new job <em>and</em> the old one until TODO 3 removed stale groups.</li>
+<li><strong>Sync scripts should be idempotent</strong> — a correct mover can re-run and only change what is wrong.</li>
+<li><strong>Analyst then engineer</strong> — inspect drift before writing the fix; real IAM jobs require both.</li>
+</ul>
+<hr />
+<h2>Summary</h2>
+<p>This lab documents end-to-end employee lifecycle automation in an educational environment: reconcile HR against identity, provision joiners (including unassigned department handling), correct movers without leaving excess access, and deprovision leavers until reconciliation reports <strong>0 findings</strong>. The open-source stack (OrangeHRM + Authentik + Python) maps conceptually to lifecycle patterns named in Entra ID, Okta, and SailPoint IdentityIQ job descriptions.</p>
+<hr />
+<h2>Disclaimer</h2>
+<p>This work is based on an <strong>educational hands-on IAM lab</strong> (All Things Identity — Hands-on IAM Labs · Lab 1 · Guide v3) in a <strong>personal lab environment, not production</strong>.</p>
+<p>References to Microsoft Entra ID, Okta, and SailPoint IdentityIQ are a <strong>concepts map only</strong>—not a claim of hands-on production experience with those products.</p>
+<p>Screenshots embedded here come from the lab guide’s documented outcomes and should not be presented as independent production evidence.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1080" viewBox="0 0 1680 1080" role="img" aria-label="Joiner Mover Leaver Lifecycle Automation">
+  <title>Joiner–Mover–Leaver Lifecycle Automation</title>
+  <desc>Editable SVG workflow: OrangeHRM to Python scripts to Authentik, plus HR vs Identity reconciliation.</desc>
+
+  <defs>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#22C55E"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#F59E0B"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#EF4444"/>
+    </marker>
+    <style>
+      .title { font: 700 34px Arial, Helvetica, sans-serif; fill: #F8FAFC; }
+      .subtitle { font: 16px Arial, Helvetica, sans-serif; fill: #94A3B8; }
+      .h { font: 700 18px Arial, Helvetica, sans-serif; }
+      .b { font: 14px Arial, Helvetica, sans-serif; fill: #E2E8F0; }
+      .s { font: 13px Arial, Helvetica, sans-serif; fill: #CBD5E1; }
+      .tiny { font: 12px Arial, Helvetica, sans-serif; fill: #64748B; }
+      .badge { font: 700 12px Arial, Helvetica, sans-serif; fill: #0B1220; }
+      .footer { font: 13px Arial, Helvetica, sans-serif; fill: #64748B; }
+      .footer2 { font: 13px Arial, Helvetica, sans-serif; fill: #475569; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1680" height="1080" fill="#0B1220"/>
+
+  <!-- Title -->
+  <text x="60" y="58" class="title">Joiner–Mover–Leaver Lifecycle Automation</text>
+  <text x="60" y="92" class="subtitle">HR source of truth (OrangeHRM)     →     Python sync scripts     →     Identity provider (Authentik)</text>
+  <line x1="60" y1="118" x2="1620" y2="118" stroke="#1E293B" stroke-width="2"/>
+
+  <!-- OrangeHRM container -->
+  <rect x="60" y="145" width="340" height="435" rx="20" fill="#121A2B" stroke="#38BDF8" stroke-width="3"/>
+  <text x="88" y="180" class="h" fill="#38BDF8">OrangeHRM</text>
+  <text x="88" y="204" class="tiny">HR System of Record</text>
+
+  <!-- Authentik container -->
+  <rect x="1280" y="145" width="340" height="435" rx="20" fill="#121A2B" stroke="#A78BFA" stroke-width="3"/>
+  <text x="1308" y="180" class="h" fill="#A78BFA">Authentik</text>
+  <text x="1308" y="204" class="tiny">Identity Provider (IdP)</text>
+
+  <!-- Scripts label -->
+  <text x="630" y="180" class="tiny" fill="#94A3B8">Python sync scripts</text>
+  <text x="630" y="200" class="tiny">via jml_common.py</text>
+
+  <!-- Lane Y centers: 250, 380, 510 -->
+  <!-- JOINER lane -->
+  <rect x="82" y="202" width="296" height="96" rx="12" fill="#0B1220" stroke="#22C55E" stroke-width="2"/>
+  <circle cx="108" cy="250" r="8" fill="#22C55E"/>
+  <text x="130" y="256" class="b">New hire records</text>
+
+  <rect x="630" y="202" width="420" height="96" rx="14" fill="#121A2B" stroke="#22C55E" stroke-width="3"/>
+  <rect x="646" y="218" width="86" height="28" rx="8" fill="#22C55E"/>
+  <text x="664" y="237" class="badge">JOINER</text>
+  <text x="748" y="238" class="h" fill="#F8FAFC">joiner.py</text>
+  <text x="650" y="272" class="s">Create Authentik account + assign dept-* group</text>
+
+  <rect x="1302" y="202" width="296" height="96" rx="12" fill="#0B1220" stroke="#A78BFA" stroke-width="2"/>
+  <circle cx="1328" cy="250" r="8" fill="#A78BFA"/>
+  <text x="1350" y="256" class="b">User accounts</text>
+
+  <line x1="402" y1="250" x2="618" y2="250" stroke="#22C55E" stroke-width="6" marker-end="url(#arrowGreen)"/>
+  <line x1="1052" y1="250" x2="1268" y2="250" stroke="#22C55E" stroke-width="6" marker-end="url(#arrowGreen)"/>
+
+  <!-- MOVER lane -->
+  <rect x="82" y="332" width="296" height="96" rx="12" fill="#0B1220" stroke="#F59E0B" stroke-width="2"/>
+  <circle cx="108" cy="380" r="8" fill="#F59E0B"/>
+  <text x="130" y="386" class="b">Department / Sub Unit</text>
+
+  <rect x="630" y="332" width="420" height="96" rx="14" fill="#121A2B" stroke="#F59E0B" stroke-width="3"/>
+  <rect x="646" y="348" width="86" height="28" rx="8" fill="#F59E0B"/>
+  <text x="666" y="367" class="badge">MOVER</text>
+  <text x="748" y="368" class="h" fill="#F8FAFC">mover.py</text>
+  <text x="650" y="402" class="s">Add new department group + remove stale groups</text>
+
+  <rect x="1302" y="332" width="296" height="96" rx="12" fill="#0B1220" stroke="#A78BFA" stroke-width="2"/>
+  <circle cx="1328" cy="380" r="8" fill="#A78BFA"/>
+  <text x="1350" y="386" class="b">Department groups</text>
+
+  <line x1="402" y1="380" x2="618" y2="380" stroke="#F59E0B" stroke-width="6" marker-end="url(#arrowOrange)"/>
+  <line x1="1052" y1="380" x2="1268" y2="380" stroke="#F59E0B" stroke-width="6" marker-end="url(#arrowOrange)"/>
+
+  <!-- LEAVER lane -->
+  <rect x="82" y="462" width="296" height="96" rx="12" fill="#0B1220" stroke="#EF4444" stroke-width="2"/>
+  <circle cx="108" cy="510" r="8" fill="#EF4444"/>
+  <text x="130" y="516" class="b">Terminate employment</text>
+
+  <rect x="630" y="462" width="420" height="96" rx="14" fill="#121A2B" stroke="#EF4444" stroke-width="3"/>
+  <rect x="646" y="478" width="90" height="28" rx="8" fill="#EF4444"/>
+  <text x="662" y="497" class="badge">LEAVER</text>
+  <text x="752" y="498" class="h" fill="#F8FAFC">leaver.py</text>
+  <text x="650" y="532" class="s">Disable Authentik account + remove all groups</text>
+
+  <rect x="1302" y="462" width="296" height="96" rx="12" fill="#0B1220" stroke="#A78BFA" stroke-width="2"/>
+  <circle cx="1328" cy="510" r="8" fill="#A78BFA"/>
+  <text x="1350" y="516" class="b">Active / disabled state</text>
+
+  <line x1="402" y1="510" x2="618" y2="510" stroke="#EF4444" stroke-width="6" marker-end="url(#arrowRed)"/>
+  <line x1="1052" y1="510" x2="1268" y2="510" stroke="#EF4444" stroke-width="6" marker-end="url(#arrowRed)"/>
+
+  <!-- Reconciliation panel -->
+  <rect x="60" y="620" width="1560" height="300" rx="20" fill="#121A2B" stroke="#475569" stroke-width="2"/>
+  <text x="84" y="660" class="h" fill="#F8FAFC">IAM Dashboard — HR vs Identity Reconciliation</text>
+  <text x="84" y="688" class="tiny" fill="#94A3B8">Compares every OrangeHRM employee to their Authentik account and flags drift</text>
+
+  <!-- Cards -->
+  <rect x="84" y="720" width="360" height="150" rx="14" fill="#0B1220" stroke="#22C55E" stroke-width="2"/>
+  <rect x="102" y="740" width="52" height="8" rx="4" fill="#22C55E"/>
+  <text x="102" y="780" class="b" fill="#22C55E">No account yet</text>
+  <text x="102" y="820" class="s">Joiner creates account + group</text>
+
+  <rect x="466" y="720" width="360" height="150" rx="14" fill="#0B1220" stroke="#F59E0B" stroke-width="2"/>
+  <rect x="484" y="740" width="52" height="8" rx="4" fill="#F59E0B"/>
+  <text x="484" y="780" class="b" fill="#F59E0B">Wrong groups (access creep)</text>
+  <text x="484" y="820" class="s">Mover removes stale groups</text>
+
+  <rect x="848" y="720" width="360" height="150" rx="14" fill="#0B1220" stroke="#EF4444" stroke-width="2"/>
+  <rect x="866" y="740" width="52" height="8" rx="4" fill="#EF4444"/>
+  <text x="866" y="780" class="b" fill="#EF4444">Terminated but still active</text>
+  <text x="866" y="820" class="s">Leaver disables + deprovisions</text>
+
+  <rect x="1230" y="720" width="360" height="150" rx="14" fill="#0B1220" stroke="#38BDF8" stroke-width="2"/>
+  <rect x="1248" y="740" width="52" height="8" rx="4" fill="#38BDF8"/>
+  <text x="1248" y="780" class="b" fill="#38BDF8">OK — HR and IdP agree</text>
+  <text x="1248" y="820" class="s">Idempotent re-runs change nothing</text>
+
+  <!-- Footer -->
+  <text x="60" y="970" class="footer">Lab stack: OrangeHRM 5.8.1  ·  Authentik 2026.8.5  ·  Python sync via jml_common helper  ·  Educational lab environment</text>
+  <text x="60" y="1000" class="footer2">Enterprise concept map: Entra ID Lifecycle Workflows  ·  Okta profile sourcing / group rules  ·  SailPoint IdentityIQ lifecycle events</text>
+</svg>
